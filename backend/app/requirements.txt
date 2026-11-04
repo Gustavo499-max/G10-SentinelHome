@@ -1,0 +1,11 @@
+
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+scikit-fuzzy
+numpy
+scapy
+python-multipart
+pytest
+httpx
