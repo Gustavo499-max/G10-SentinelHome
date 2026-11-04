@@ -9,3 +9,4 @@ scapy
 python-multipart
 pytest
 httpx
+networkx

@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030610">
+
+    <title>G10 SentinelHome | Cyber Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module" src="js/app.js"></script>
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-emblem">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>G10</span>
+            </div>
+
+            <div class="brand-text">
+                <h1>SENTINEL<span>HOME</span></h1>
+                <small>CYBER INTELLIGENCE PLATFORM</small>
+            </div>
+        </div>
+
+        <div class="sidebar-label">COMMAND CENTER</div>
+
+        <nav class="navigation">
+            <button class="nav-link active" data-page="overview">
+                <i class="fa-solid fa-house"></i>
+                <span>Visão Geral</span>
+            </button>
+
+            <button class="nav-link" data-page="universe">
+                <i class="fa-solid fa-diagram-project"></i>
+                <span>Network Universe</span>
+            </button>
+
+            <button class="nav-link" data-page="devices">
+                <i class="fa-solid fa-computer"></i>
+                <span>Dispositivos</span>
+            </button>
+
+            <button class="nav-link" data-page="alerts">
+                <i class="fa-solid fa-bell"></i>
+                <span>Alertas</span>
+                <b id="nav-alert-count">0</b>
+            </button>
+
+            <button class="nav-link" data-page="analysis">
+                <i class="fa-solid fa-brain"></i>
+                <span>Inteligência Fuzzy</span>
+            </button>
+
+            <button class="nav-link" data-page="reports">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Relatórios</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="connection-box">
+                <span id="connection-dot" class="status-dot offline"></span>
+                <div>
+                    <strong id="connection-text">API desconectada</strong>
+                    <small>BACKEND CONNECTION</small>
+                </div>
+            </div>
+
+            <div class="operator">
+                <div class="operator-avatar">
+                    <i class="fa-solid fa-user-secret"></i>
+                </div>
+                <div>
+                    <strong>Operador G10</strong>
+                    <small>NEXUS SECURITY TEAM</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="heading">
+                <span class="breadcrumb">G10 / CENTRAL DE OPERAÇÕES</span>
+                <h2 id="page-heading">VISÃO GERAL</h2>
+                <p>Monitoramento inteligente da rede</p>
+            </div>
+
+            <div class="topbar-actions">
+                <div class="system-state">
+                    <span class="status-dot online"></span>
+                    <span id="system-state">SISTEMA ONLINE</span>
+                </div>
+
+                <div class="digital-clock">
+                    <strong id="clock">--:--:--</strong>
+                    <small id="current-date">--/--/----</small>
+                </div>
+
+                <button class="top-icon" id="refresh-button" title="Atualizar">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- VISÃO GERAL -->
+
+        <section id="page-overview" class="page active">
+
+            <div class="stats-grid">
+
+                <article class="stat-card cyan">
+                    <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
+                    <div class="stat-content">
+                        <span>DISPOSITIVOS CADASTRADOS</span>
+                        <strong id="stat-devices">0</strong>
+                        <small>Inventário da rede</small>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+                <article class="stat-card purple">
+                    <div class="stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="stat-content">
+                        <span>ALERTAS DETECTADOS</span>
+                        <strong id="stat-alerts">0</strong>
+                        <small>Eventos registrados</small>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+                <article class="stat-card red">
+                    <div class="stat-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <div class="stat-content">
+                        <span>INCIDENTES CRÍTICOS</span>
+                        <strong id="stat-critical">0</strong>
+                        <small>Prioridade máxima</small>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+                <article class="stat-card amber">
+                    <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="stat-content">
+                        <span>RISCO MÉDIO DA REDE</span>
+                        <strong id="average-risk">0%</strong>
+                        <small id="average-risk-label">Sem dados</small>
+                    </div>
+                    <div class="card-glow"></div>
+                </article>
+
+            </div>
+
+            <div class="command-grid">
+
+                <div class="left-column">
+
+                    <article class="hud-panel traffic-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <span class="panel-code">01 / NETWORK INTELLIGENCE</span>
+                                <h3><i class="fa-solid fa-wave-square"></i> ATIVIDADE DA REDE</h3>
+                            </div>
+                            <span class="live-tag">DADOS HISTÓRICOS</span>
+                        </div>
+
+                        <div class="chart-wrap">
+                            <canvas id="traffic-chart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="hud-panel threat-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <span class="panel-code">02 / THREAT INTELLIGENCE</span>
+                                <h3><i class="fa-solid fa-earth-americas"></i> MAPA DE AMEAÇAS</h3>
+                            </div>
+                        </div>
+
+                        <div class="threat-map">
+                            <div class="map-grid"></div>
+                            <div class="map-orbit orbit-one"></div>
+                            <div class="map-orbit orbit-two"></div>
+                            <div class="map-point point-one"></div>
+                            <div class="map-point point-two"></div>
+                            <div class="map-point point-three"></div>
+                            <div class="map-center">
+                                <i class="fa-solid fa-crosshairs"></i>
+                                <span>REDE MONITORADA</span>
+                            </div>
+                            <p>Visualização ilustrativa. Eventos geográficos reais dependem dos dados de origem.</p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <div class="globe-column">
+                    <div class="globe-heading">
+                        <span>G10 NETWORK CORE</span>
+                        <small>3D ENVIRONMENT</small>
+                    </div>
+
+                    <div id="globe-container" class="globe-container">
+                        <div class="globe-loading" id="globe-loading">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                            <span>INICIALIZANDO NETWORK CORE</span>
+                        </div>
+                    </div>
+
+                    <div class="globe-footer">
+                        <span><i class="fa-solid fa-circle"></i> CORE VISUALIZATION</span>
+                        <span>G10 / NEXUS</span>
+                    </div>
+                </div>
+
+                <div class="right-column">
+
+                    <article class="hud-panel risk-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <span class="panel-code">03 / ARTIFICIAL INTELLIGENCE</span>
+                                <h3><i class="fa-solid fa-brain"></i> ANÁLISE DE RISCO</h3>
+                            </div>
+                        </div>
+
+                        <div class="risk-content">
+                            <div class="risk-gauge" id="risk-gauge">
+                                <div class="risk-gauge-inner">
+                                    <strong id="risk-value">0%</strong>
+                                    <span id="risk-level">SEM DADOS</span>
+                                </div>
+                            </div>
+
+                            <div class="risk-legend">
+                                <div><i class="red-dot"></i> Crítico <b>≥ 70%</b></div>
+                                <div><i class="amber-dot"></i> Moderado <b>40–69%</b></div>
+                                <div><i class="green-dot"></i> Baixo <b>&lt; 40%</b></div>
+                            </div>
+                        </div>
+
+                        <button class="neon-button" data-page="analysis">
+                            <i class="fa-solid fa-brain"></i>
+                            CALCULAR RISCO
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </article>
+
+                    <article class="hud-panel recent-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <span class="panel-code">04 / SECURITY EVENTS</span>
+                                <h3><i class="fa-solid fa-triangle-exclamation"></i> ALERTAS RECENTES</h3>
+                            </div>
+                            <button class="text-button" data-page="alerts">VER TODOS →</button>
+                        </div>
+
+                        <div id="recent-alerts" class="recent-alerts">
+                            <div class="empty-state">Nenhum alerta registrado.</div>
+                        </div>
+                    </article>
+
+                </div>
+
+            </div>
+
+            <article class="hud-panel network-flow-panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-code">05 / NETWORK TELEMETRY</span>
+                        <h3><i class="fa-solid fa-chart-area"></i> FLUXO DE REDE</h3>
+                    </div>
+                    <span class="live-tag">VISUALIZAÇÃO</span>
+                </div>
+
+                <div class="network-flow">
+                    <canvas id="flow-canvas"></canvas>
+                </div>
+                <p class="visual-note">Animação visual demonstrativa. Métricas reais de tráfego serão integradas ao coletor de rede.</p>
+            </article>
+
+        </section>
+
+        <!-- NETWORK UNIVERSE -->
+
+        <section id="page-universe" class="page">
+            <div class="section-intro">
+                <span class="panel-code">06 / NETWORK TOPOLOGY</span>
+                <h3>NETWORK UNIVERSE</h3>
+                <p>Visualização dos dispositivos cadastrados e suas conexões.</p>
+            </div>
+
+            <article class="hud-panel universe-panel">
+                <div id="universe-container"></div>
+            </article>
+            <div id="universe-devices" class="device-grid"></div>
+        </section>
+
+        <!-- DISPOSITIVOS -->
+
+        <section id="page-devices" class="page">
+            <div class="section-intro">
+                <span class="panel-code">07 / ASSET MANAGEMENT</span>
+                <h3>DISPOSITIVOS</h3>
+                <p>Inventário de equipamentos registrados na rede.</p>
+            </div>
+
+            <div class="section-actions">
+                <button class="neon-button" id="add-device-button">
+                    <i class="fa-solid fa-plus"></i> ADICIONAR DISPOSITIVO
+                </button>
+            </div>
+
+            <article class="hud-panel">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DISPOSITIVO</th>
+                                <th>ENDEREÇO IP</th>
+                                <th>TIPO</th>
+                                <th>STATUS</th>
+                                <th>RISCO</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devices-table">
+                            <tr><td colspan="6" class="empty-state">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- ALERTAS -->
+
+        <section id="page-alerts" class="page">
+            <div class="section-intro">
+                <span class="panel-code">08 / INCIDENT RESPONSE</span>
+                <h3>CENTRAL DE ALERTAS</h3>
+                <p>Gerenciamento de eventos e incidentes de segurança.</p>
+            </div>
+
+            <div class="section-actions">
+                <button class="neon-button" id="add-alert-button">
+                    <i class="fa-solid fa-plus"></i> REGISTRAR ALERTA
+                </button>
+            </div>
+
+            <article class="hud-panel">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>EVENTO</th>
+                                <th>TIPO</th>
+                                <th>ORIGEM</th>
+                                <th>SEVERIDADE</th>
+                                <th>RISCO</th>
+                                <th>STATUS</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alerts-table">
+                            <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- FUZZY -->
+
+        <section id="page-analysis" class="page">
+            <div class="section-intro">
+                <span class="panel-code">09 / COMPUTATIONAL INTELLIGENCE</span>
+                <h3>FUZZY RISK ENGINE</h3>
+                <p>Motor de inferência para avaliação heurística de risco.</p>
+            </div>
+
+            <div class="analysis-grid">
+                <article class="hud-panel">
+                    <div class="panel-heading">
+                        <h3>PARÂMETROS DE ENTRADA</h3>
+                    </div>
+
+                    <form id="fuzzy-form" class="fuzzy-form">
+                        <label>Frequência de pacotes
+                            <input type="number" id="fuzzy-packets" min="0" max="100" value="30" required>
+                        </label>
+
+                        <label>Portas suspeitas
+                            <input type="number" id="fuzzy-ports" min="0" max="100" value="20" required>
+                        </label>
+
+                        <label>Tráfego anormal
+                            <input type="number" id="fuzzy-traffic" min="0" max="100" value="25" required>
+                        </label>
+
+                        <button class="neon-button" type="submit">
+                            EXECUTAR INFERÊNCIA
+                        </button>
+                    </form>
+                </article>
+
+                <article class="hud-panel analysis-result">
+                    <span class="panel-code">INFERENCE OUTPUT</span>
+                    <strong id="fuzzy-result">--%</strong>
+                    <span id="fuzzy-level">AGUARDANDO ANÁLISE</span>
+                    <p id="fuzzy-explanation">O resultado aparecerá após o cálculo.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- RELATÓRIOS -->
+
+        <section id="page-reports" class="page">
+            <div class="section-intro">
+                <span class="panel-code">10 / SECURITY REPORTS</span>
+                <h3>RELATÓRIOS</h3>
+                <p>Histórico de eventos e análise de arquivos de rede.</p>
+            </div>
+
+            <article class="hud-panel">
+                <h3>ANÁLISE DE CAPTURA PCAP</h3>
+                <p>Importe arquivos de captura para análise.</p>
+
+                <form id="pcap-form">
+                    <input type="file" id="pcap-file" accept=".pcap,.pcapng" required>
+                    <button class="neon-button" type="submit">ANALISAR ARQUIVO</button>
+                </form>
+
+                <pre id="pcap-result" class="code-result">Aguardando arquivo.</pre>
+            </article>
+        </section>
+
+        <footer class="footer">
+            G10 SENTINELHOME
+            <span>CYBER INTELLIGENCE PLATFORM</span>
+            <span>VERSION 2.0</span>
+        </footer>
+
+    </main>
+</div>
+
+<!-- MODAL DISPOSITIVO -->
+
+<dialog id="device-dialog">
+    <form id="device-form" class="dialog-form">
+        <div class="dialog-heading">
+            <h3>NOVO DISPOSITIVO</h3>
+            <button type="button" class="close-button" data-close="device-dialog">×</button>
+        </div>
+
+        <label>Nome
+            <input name="name" required minlength="2">
+        </label>
+
+        <label>Endereço IP
+            <input name="ip_address" required placeholder="192.168.0.10">
+        </label>
+
+        <label>MAC
+            <input name="mac_address" placeholder="AA:BB:CC:DD:EE:FF">
+        </label>
+
+        <label>Tipo
+            <select name="device_type">
+                <option>Computador</option>
+                <option>Smartphone</option>
+                <option>Roteador</option>
+                <option>Câmera</option>
+                <option>IoT</option>
+                <option>Outro</option>
+            </select>
+        </label>
+
+        <button class="neon-button" type="submit">CADASTRAR</button>
+    </form>
+</dialog>
+
+<!-- MODAL ALERTA -->
+
+<dialog id="alert-dialog">
+    <form id="alert-form" class="dialog-form">
+        <div class="dialog-heading">
+            <h3>NOVO ALERTA</h3>
+            <button type="button" class="close-button" data-close="alert-dialog">×</button>
+        </div>
+
+        <label>Título
+            <input name="title" required minlength="3">
+        </label>
+
+        <label>Descrição
+            <textarea name="description"></textarea>
+        </label>
+
+        <label>Tipo de evento
+            <input name="event_type" required>
+        </label>
+
+        <label>IP de origem
+            <input name="source_ip">
+        </label>
+
+        <label>Severidade
+            <select name="severity">
+                <option value="baixo">Baixo</option>
+                <option value="moderado">Moderado</option>
+                <option value="alto">Alto</option>
+                <option value="critico">Crítico</option>
+            </select>
+        </label>
+
+        <label>Risco
+            <input name="risk_score" type="number" min="0" max="100" value="30">
+        </label>
+
+        <button class="neon-button" type="submit">REGISTRAR</button>
+    </form>
+</dialog>
+
+<div id="toast-container" class="toast-container"></div>
+
+</body>
+</html>
