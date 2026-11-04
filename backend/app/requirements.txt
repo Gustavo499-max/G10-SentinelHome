@@ -1,10 +1,10 @@
-
 fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic
 scikit-fuzzy
 numpy
+scipy
 scapy
 python-multipart
 pytest

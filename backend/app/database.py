@@ -1,8 +1,15 @@
 
-from sqlalchemy import create_engine # pyright: ignore[reportMissingImports]
-from sqlalchemy.orm import declarative_base, sessionmaker # pyright: ignore[reportMissingImports]
 
-DATABASE_URL = "sqlite:///./sentinelhome.db"
+from pathlib import Path
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+DATABASE_DIR = BASE_DIR / "data"
+DATABASE_DIR.mkdir(parents=True, exist_ok=True)
+
+DATABASE_URL = f"sqlite:///{DATABASE_DIR / 'sentinelhome.db'}"
 
 engine = create_engine(
     DATABASE_URL,
