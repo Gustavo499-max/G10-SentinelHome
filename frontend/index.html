@@ -302,20 +302,123 @@
 
         </section>
 
-        <!-- NETWORK UNIVERSE -->
+       <!-- NETWORK UNIVERSE -->
+<section id="page-universe" class="page">
 
-        <section id="page-universe" class="page">
-            <div class="section-intro">
-                <span class="panel-code">06 / NETWORK TOPOLOGY</span>
-                <h3>NETWORK UNIVERSE</h3>
-                <p>Visualização dos dispositivos cadastrados e suas conexões.</p>
+    <div class="section-intro">
+        <span class="panel-code">06 / NETWORK TOPOLOGY</span>
+        <h3>NETWORK UNIVERSE</h3>
+        <p>Central de visualização e inteligência dos dispositivos cadastrados.</p>
+    </div>
+
+    <!-- INDICADORES -->
+    <div class="universe-stats">
+
+        <article class="universe-stat">
+            <span>DISPOSITIVOS</span>
+            <strong id="universe-total">0</strong>
+            <small>Total cadastrado</small>
+        </article>
+
+        <article class="universe-stat">
+            <span>ATIVOS</span>
+            <strong id="universe-active">0</strong>
+            <small>Status informado pela API</small>
+        </article>
+
+        <article class="universe-stat warning">
+            <span>ATENÇÃO</span>
+            <strong id="universe-warning">0</strong>
+            <small>Risco moderado</small>
+        </article>
+
+        <article class="universe-stat critical">
+            <span>CRÍTICOS</span>
+            <strong id="universe-critical">0</strong>
+            <small>Risco elevado</small>
+        </article>
+
+    </div>
+
+    <!-- UNIVERSO 3D -->
+    <div class="universe-layout">
+
+        <article class="hud-panel universe-panel">
+
+            <div class="universe-toolbar">
+                <div>
+                    <span class="panel-code">G10 / 3D NETWORK ENVIRONMENT</span>
+                    <h3>MAPA DE DISPOSITIVOS</h3>
+                </div>
+
+                <span class="universe-live">
+                    <i></i> INVENTÁRIO DA API
+                </span>
             </div>
 
-            <article class="hud-panel universe-panel">
-                <div id="universe-container"></div>
-            </article>
-            <div id="universe-devices" class="device-grid"></div>
-        </section>
+            <div id="universe-container">
+
+                <div class="universe-loading">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <span>CARREGANDO UNIVERSO...</span>
+                </div>
+
+            </div>
+
+            <div class="universe-legend">
+                <span><i class="legend-dot low"></i> Baixo</span>
+                <span><i class="legend-dot moderate"></i> Moderado</span>
+                <span><i class="legend-dot critical"></i> Crítico</span>
+                <span><i class="legend-dot unknown"></i> Sem dados</span>
+            </div>
+
+            <p class="universe-note">
+                As linhas representam ligações visuais do inventário com o núcleo.
+                Não comprovam comunicação ou tráfego real entre dispositivos.
+            </p>
+
+        </article>
+
+        <!-- DETALHES -->
+        <aside class="hud-panel universe-details">
+
+            <span class="panel-code">DEVICE INTELLIGENCE</span>
+
+            <h3>DISPOSITIVO SELECIONADO</h3>
+
+            <div id="universe-detail-content">
+
+                <div class="universe-empty-detail">
+                    <i class="fa-solid fa-computer"></i>
+                    <strong>Nenhum dispositivo selecionado</strong>
+                    <span>Clique em um dispositivo no universo ou na lista.</span>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- LISTA DE DISPOSITIVOS -->
+    <article class="hud-panel universe-inventory">
+
+        <div class="panel-heading">
+            <div>
+                <span class="panel-code">ASSET INVENTORY</span>
+                <h3>DISPOSITIVOS DO UNIVERSO</h3>
+            </div>
+        </div>
+
+        <div id="universe-devices" class="device-grid">
+            <div class="empty-state">
+                Aguardando dispositivos da API.
+            </div>
+        </div>
+
+    </article>
+
+</section>
 
         <!-- DISPOSITIVOS -->
 
@@ -400,28 +503,54 @@
             </div>
 
             <div class="analysis-grid">
-                <article class="hud-panel">
-                    <div class="panel-heading">
-                        <h3>PARÂMETROS DE ENTRADA</h3>
-                    </div>
+               
+<form id="fuzzy-form" class="fuzzy-form">
 
-                    <form id="fuzzy-form" class="fuzzy-form">
-                        <label>Frequência de pacotes
-                            <input type="number" id="fuzzy-packets" min="0" max="100" value="30" required>
-                        </label>
+    <label>Dispositivo monitorado
+        <select id="fuzzy-device" required>
+            <option value="">Carregando dispositivos...</option>
+        </select>
+    </label>
 
-                        <label>Portas suspeitas
-                            <input type="number" id="fuzzy-ports" min="0" max="100" value="20" required>
-                        </label>
+    <label>Frequência de pacotes
+        <input
+            type="number"
+            id="fuzzy-packets"
+            min="0"
+            max="100"
+            value="30"
+            required
+        >
+    </label>
 
-                        <label>Tráfego anormal
-                            <input type="number" id="fuzzy-traffic" min="0" max="100" value="25" required>
-                        </label>
+    <label>Portas suspeitas
+        <input
+            type="number"
+            id="fuzzy-ports"
+            min="0"
+            max="100"
+            value="20"
+            required
+        >
+    </label>
 
-                        <button class="neon-button" type="submit">
-                            EXECUTAR INFERÊNCIA
-                        </button>
-                    </form>
+    <label>Tráfego anormal
+        <input
+            type="number"
+            id="fuzzy-traffic"
+            min="0"
+            max="100"
+            value="25"
+            required
+        >
+    </label>
+
+    <button class="neon-button" type="submit">
+        EXECUTAR INFERÊNCIA
+    </button>
+
+</form>
+
                 </article>
 
                 <article class="hud-panel analysis-result">
@@ -478,7 +607,15 @@
         </label>
 
         <label>Endereço IP
-            <input name="ip_address" required placeholder="192.168.0.10">
+          <input
+    type="text"
+    name="ip_address"
+    required
+    placeholder="192.168.0.10"
+    autocomplete="off"
+    spellcheck="false"
+    maxlength="45"
+>
         </label>
 
         <label>MAC

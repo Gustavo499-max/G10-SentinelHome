@@ -1363,3 +1363,369 @@ dialog::backdrop {
         scroll-behavior: auto !important;
     }
 }
+/* =====================================================
+   G10 SENTINELHOME — NETWORK UNIVERSE LAYOUT FIX
+   Adicione este bloco AO FINAL de frontend/css/style.css
+===================================================== */
+
+#page-universe {
+    width: 100%;
+    min-width: 0;
+}
+
+#page-universe .section-intro {
+    margin-bottom: 22px;
+}
+
+#page-universe .universe-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0 0 18px;
+}
+
+#page-universe .universe-stat {
+    min-width: 0;
+    min-height: 112px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    padding: 17px 19px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: linear-gradient(145deg, rgba(13, 29, 54, .94), rgba(5, 12, 26, .96));
+    box-shadow: 0 8px 30px #0003, inset 0 0 20px #00f0ff05;
+}
+
+#page-universe .universe-stat > span {
+    color: #829bb5;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+}
+
+#page-universe .universe-stat > strong {
+    color: var(--cyan);
+    font: 700 27px Orbitron, sans-serif;
+    line-height: 1.15;
+}
+
+#page-universe .universe-stat > small {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+#page-universe .universe-stat.warning > strong {
+    color: var(--yellow);
+}
+
+#page-universe .universe-stat.critical > strong {
+    color: var(--red);
+}
+
+#page-universe .universe-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    align-items: stretch;
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+#page-universe .universe-panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#page-universe .universe-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+#page-universe .universe-toolbar h3,
+#page-universe .universe-details h3,
+#page-universe .universe-inventory h3 {
+    margin: 7px 0 0;
+    color: #dff6ff;
+    font: 600 12px Orbitron, sans-serif;
+    letter-spacing: .5px;
+}
+
+#page-universe .universe-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    color: var(--green);
+    border: 1px solid #00ffb337;
+    border-radius: 5px;
+    background: #00ffb30c;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    white-space: nowrap;
+}
+
+#page-universe .universe-live i {
+    width: 7px;
+    height: 7px;
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 9px var(--green);
+    animation: pulse 1.8s infinite;
+}
+
+#universe-container {
+    position: relative;
+    width: 100%;
+    height: clamp(390px, 52vh, 590px);
+    min-height: 390px;
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid rgba(0, 240, 255, .18);
+    border-radius: 10px;
+    background:
+        radial-gradient(ellipse at 50% 48%, rgba(18, 48, 91, .55), transparent 58%),
+        linear-gradient(180deg, #071329, #030916);
+}
+
+#universe-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(0, 240, 255, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, .045) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at center, black 25%, transparent 90%);
+}
+
+#universe-container canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: pan-y;
+    cursor: grab;
+}
+
+#universe-container canvas:active {
+    cursor: grabbing;
+}
+
+#page-universe .universe-loading,
+#page-universe .universe-overlay-message {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    color: var(--cyan);
+    text-align: center;
+    font: 700 9px Orbitron, sans-serif;
+    letter-spacing: 1px;
+    pointer-events: none;
+}
+
+#page-universe .universe-loading i {
+    font-size: 25px;
+    filter: drop-shadow(0 0 10px var(--cyan));
+}
+
+#page-universe .universe-overlay-message {
+    inset: auto 12px 12px;
+    min-height: 42px;
+    padding: 10px;
+    color: #9bb4ce;
+    border: 1px solid rgba(0, 240, 255, .14);
+    border-radius: 7px;
+    background: rgba(3, 9, 22, .78);
+    font: 500 9px Inter, sans-serif;
+    letter-spacing: 0;
+}
+
+#page-universe .universe-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 13px 2px 2px;
+}
+
+#page-universe .universe-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+#page-universe .legend-dot {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 50%;
+}
+
+#page-universe .legend-dot.low { background: var(--green); box-shadow: 0 0 8px var(--green); }
+#page-universe .legend-dot.moderate { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+#page-universe .legend-dot.critical { background: var(--red); box-shadow: 0 0 8px var(--red); }
+#page-universe .legend-dot.unknown { background: #8aaeff; box-shadow: 0 0 8px #8aaeff; }
+
+#page-universe .universe-note {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+#page-universe .universe-details {
+    min-width: 0;
+    min-height: 100%;
+}
+
+#page-universe .universe-empty-detail {
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px;
+    color: var(--muted);
+    text-align: center;
+}
+
+#page-universe .universe-empty-detail i {
+    color: var(--cyan);
+    font-size: 34px;
+    filter: drop-shadow(0 0 12px #00f0ff55);
+}
+
+#page-universe .universe-empty-detail strong {
+    color: var(--text);
+    font-size: 10px;
+}
+
+#page-universe .universe-empty-detail span {
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+#page-universe .universe-inventory {
+    margin-top: 15px;
+}
+
+#page-universe .device-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+#page-universe .device-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px;
+    color: var(--text);
+    text-align: left;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: rgba(4, 13, 29, .8);
+    transition: .2s ease;
+}
+
+#page-universe .device-card:hover,
+#page-universe .device-card.selected {
+    border-color: var(--cyan);
+    background: rgba(0, 240, 255, .07);
+    box-shadow: 0 0 18px rgba(0, 240, 255, .1);
+    transform: translateY(-2px);
+}
+
+#page-universe .device-card strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: #eaf7ff;
+    font-size: 10px;
+}
+
+#page-universe .device-card small {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: var(--muted);
+    font-size: 9px;
+}
+
+#page-universe .device-card.low { border-left: 3px solid var(--green); }
+#page-universe .device-card.moderate { border-left: 3px solid var(--yellow); }
+#page-universe .device-card.critical { border-left: 3px solid var(--red); }
+#page-universe .device-card.unknown { border-left: 3px solid #8aaeff; }
+
+@media (max-width: 1050px) {
+    #page-universe .universe-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #page-universe .universe-details {
+        min-height: auto;
+    }
+
+    #page-universe .universe-empty-detail {
+        min-height: 150px;
+    }
+}
+
+@media (max-width: 760px) {
+    #page-universe .universe-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    #page-universe .universe-stat {
+        min-height: 96px;
+        padding: 13px;
+    }
+
+    #page-universe .universe-stat > strong {
+        font-size: 22px;
+    }
+
+    #page-universe .device-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #universe-container {
+        height: 420px;
+        min-height: 350px;
+    }
+}
+
+@media (max-width: 460px) {
+    #page-universe .universe-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #page-universe .device-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #page-universe .universe-legend {
+        gap: 9px 12px;
+    }
+}

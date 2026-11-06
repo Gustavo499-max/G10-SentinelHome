@@ -1,12 +1,24 @@
+
+# Framework da API
 fastapi
 uvicorn[standard]
+
+# Banco de dados e validação
 sqlalchemy
 pydantic
+
+# Inteligência computacional e lógica fuzzy
 scikit-fuzzy
 numpy
 scipy
+
+# Monitoramento e análise de redes
 scapy
+networkx
+
+# Upload de arquivos
 python-multipart
+
+# Testes automatizados
 pytest
 httpx
-networkx

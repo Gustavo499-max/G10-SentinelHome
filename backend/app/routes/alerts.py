@@ -1,87 +1,247 @@
 
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import Alert
-from app.schemas import AlertCreate, AlertResponse, AlertStatusUpdate
+from app.schemas import (
+    AlertCreate,
+    AlertResponse,
+    AlertStatusUpdate,
+)
 
-router = APIRouter(prefix="/api/alerts", tags=["Alertas"])
 
-VALID_SEVERITIES = {"baixo", "moderado", "alto", "critico"}
-VALID_STATUSES = {"aberto", "investigando", "resolvido"}
+# =====================================================
+# CONFIGURACAO DA ROTA
+# =====================================================
+
+router = APIRouter(
+    prefix="/api/alerts",
+    tags=["Alertas"],
+)
 
 
-@router.post("/", response_model=AlertResponse, status_code=201)
-def create_alert(data: AlertCreate, db: Session = Depends(get_db)):
-    if data.severity not in VALID_SEVERITIES:
-        raise HTTPException(422, "Gravidade invalida.")
+# =====================================================
+# REGRAS DE VALIDACAO
+# =====================================================
 
-    alert = Alert(**data.model_dump(), status="aberto")
+VALID_SEVERITIES = {
+    "baixo",
+    "moderado",
+    "alto",
+    "critico",
+}
 
-    db.add(alert)
-    db.commit()
-    db.refresh(alert)
+VALID_STATUSES = {
+    "aberto",
+    "investigando",
+    "resolvido",
+}
+
+
+# =====================================================
+# FUNCAO AUXILIAR — BUSCAR ALERTA
+# =====================================================
+
+def find_alert(db: Session, alert_id: int):
+
+    alert = (
+        db.query(Alert)
+        .filter(Alert.id == alert_id)
+        .first()
+    )
+
+    if not alert:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Alerta nao encontrado.",
+        )
 
     return alert
 
 
-@router.get("/", response_model=list[AlertResponse])
-def list_alerts(
-    status: str | None = None,
-    severity: str | None = None,
-    db: Session = Depends(get_db)
+# =====================================================
+# CRIAR ALERTA
+# =====================================================
+
+@router.post(
+    "/",
+    response_model=AlertResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_alert(
+    data: AlertCreate,
+    db: Session = Depends(get_db),
 ):
+    """
+    Registra um novo alerta de seguranca.
+    """
+
+    severity = data.severity.strip().lower()
+
+    if severity not in VALID_SEVERITIES:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Gravidade invalida.",
+        )
+
+    alert_data = data.model_dump()
+
+    alert_data["severity"] = severity
+
+    alert = Alert(
+        **alert_data,
+        status="aberto",
+    )
+
+    try:
+        db.add(alert)
+        db.commit()
+        db.refresh(alert)
+
+        return alert
+
+    except SQLAlchemyError:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro ao registrar o alerta.",
+        )
+
+
+# =====================================================
+# LISTAR ALERTAS
+# =====================================================
+
+@router.get(
+    "/",
+    response_model=list[AlertResponse],
+)
+def list_alerts(
+    status_filter: str | None = None,
+    severity: str | None = None,
+    db: Session = Depends(get_db),
+):
+    """
+    Lista alertas com filtros opcionais.
+    """
+
     query = db.query(Alert)
 
-    if status:
-        if status not in VALID_STATUSES:
-            raise HTTPException(422, "Status invalido.")
-        query = query.filter(Alert.status == status)
+    if status_filter:
+
+        status_filter = status_filter.strip().lower()
+
+        if status_filter not in VALID_STATUSES:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Status invalido.",
+            )
+
+        query = query.filter(
+            Alert.status == status_filter
+        )
 
     if severity:
+
+        severity = severity.strip().lower()
+
         if severity not in VALID_SEVERITIES:
-            raise HTTPException(422, "Gravidade invalida.")
-        query = query.filter(Alert.severity == severity)
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Gravidade invalida.",
+            )
 
-    return query.order_by(Alert.created_at.desc()).all()
+        query = query.filter(
+            Alert.severity == severity
+        )
+
+    return (
+        query
+        .order_by(Alert.created_at.desc())
+        .all()
+    )
 
 
-@router.patch("/{alert_id}", response_model=AlertResponse)
+# =====================================================
+# ATUALIZAR STATUS DO ALERTA
+# =====================================================
+
+@router.patch(
+    "/{alert_id}",
+    response_model=AlertResponse,
+)
 def update_alert(
     alert_id: int,
     data: AlertStatusUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    if data.status not in VALID_STATUSES:
-        raise HTTPException(422, "Status invalido.")
+    """
+    Atualiza o status de um alerta.
+    """
 
-    alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    new_status = data.status.strip().lower()
 
-    if not alert:
-        raise HTTPException(404, "Alerta nao encontrado.")
+    if new_status not in VALID_STATUSES:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Status invalido.",
+        )
 
-    alert.status = data.status
+    alert = find_alert(db, alert_id)
 
-    if data.status == "resolvido":
+    alert.status = new_status
+
+    if new_status == "resolvido":
         alert.resolved_at = datetime.utcnow()
     else:
         alert.resolved_at = None
 
-    db.commit()
-    db.refresh(alert)
+    try:
+        db.commit()
+        db.refresh(alert)
 
-    return alert
+        return alert
+
+    except SQLAlchemyError:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro ao atualizar o alerta.",
+        )
 
 
-@router.delete("/{alert_id}", status_code=204)
-def delete_alert(alert_id: int, db: Session = Depends(get_db)):
-    alert = db.query(Alert).filter(Alert.id == alert_id).first()
+# =====================================================
+# EXCLUIR ALERTA
+# =====================================================
 
-    if not alert:
-        raise HTTPException(404, "Alerta nao encontrado.")
+@router.delete(
+    "/{alert_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_alert(
+    alert_id: int,
+    db: Session = Depends(get_db),
+):
+    """
+    Exclui um alerta do sistema.
+    """
 
-    db.delete(alert)
-    db.commit()
+    alert = find_alert(db, alert_id)
+
+    try:
+        db.delete(alert)
+        db.commit()
+
+    except SQLAlchemyError:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erro ao excluir o alerta.",
+        )
