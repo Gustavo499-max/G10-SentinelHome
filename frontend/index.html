@@ -72,10 +72,6 @@
                 <span>Inteligência Fuzzy</span>
             </button>
 
-            <button class="nav-link" data-page="reports">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Relatórios</span>
-            </button>
         </nav>
 
         <div class="sidebar-bottom">
@@ -493,106 +489,199 @@
             </article>
         </section>
 
-        <!-- FUZZY -->
+       
+<!-- FUZZY RISK ENGINE -->
+<section id="page-analysis" class="page">
 
-        <section id="page-analysis" class="page">
-            <div class="section-intro">
-                <span class="panel-code">09 / COMPUTATIONAL INTELLIGENCE</span>
-                <h3>FUZZY RISK ENGINE</h3>
-                <p>Motor de inferência para avaliação heurística de risco.</p>
+    <div class="section-intro">
+        <span class="panel-code">09 / COMPUTATIONAL INTELLIGENCE</span>
+        <h3>FUZZY RISK ENGINE</h3>
+        <p>
+            Motor de inteligência computacional para avaliação
+            heurística de risco por dispositivo.
+        </p>
+    </div>
+
+    <!-- DEVICE SELECTION -->
+    <article class="hud-panel" style="padding:22px; margin-bottom:20px;">
+
+        <div class="panel-heading">
+            <div>
+                <span class="panel-code">DEVICE IDENTIFICATION</span>
+                <h3>DISPOSITIVO MONITORADO</h3>
             </div>
+        </div>
 
-            <div class="analysis-grid">
-               
-<form id="fuzzy-form" class="fuzzy-form">
+        <label for="fuzzy-device">Selecione o dispositivo</label>
 
-    <label>Dispositivo monitorado
-        <select id="fuzzy-device" required>
+        <select id="fuzzy-device" required style="width:100%; margin-top:8px;">
             <option value="">Carregando dispositivos...</option>
         </select>
-    </label>
 
-    <label>Frequência de pacotes
-        <input
-            type="number"
-            id="fuzzy-packets"
-            min="0"
-            max="100"
-            value="30"
-            required
-        >
-    </label>
+        <div id="fuzzy-device-info" style="margin-top:12px;">
+            <span class="panel-code">
+                Selecione um dispositivo para consultar suas informações.
+            </span>
+        </div>
 
-    <label>Portas suspeitas
-        <input
-            type="number"
-            id="fuzzy-ports"
-            min="0"
-            max="100"
-            value="20"
-            required
-        >
-    </label>
+    </article>
 
-    <label>Tráfego anormal
-        <input
-            type="number"
-            id="fuzzy-traffic"
-            min="0"
-            max="100"
-            value="25"
-            required
-        >
-    </label>
+    <!-- ANALYSIS GRID -->
+    <div class="analysis-grid">
 
-    <button class="neon-button" type="submit">
-        EXECUTAR INFERÊNCIA
-    </button>
+        <!-- MANUAL SIMULATION -->
+        <article class="hud-panel" style="padding:22px;">
 
-</form>
-
-                </article>
-
-                <article class="hud-panel analysis-result">
-                    <span class="panel-code">INFERENCE OUTPUT</span>
-                    <strong id="fuzzy-result">--%</strong>
-                    <span id="fuzzy-level">AGUARDANDO ANÁLISE</span>
-                    <p id="fuzzy-explanation">O resultado aparecerá após o cálculo.</p>
-                </article>
-            </div>
-        </section>
-
-        <!-- RELATÓRIOS -->
-
-        <section id="page-reports" class="page">
-            <div class="section-intro">
-                <span class="panel-code">10 / SECURITY REPORTS</span>
-                <h3>RELATÓRIOS</h3>
-                <p>Histórico de eventos e análise de arquivos de rede.</p>
+            <div class="panel-heading">
+                <div>
+                    <span class="panel-code">MANUAL TEST ENVIRONMENT</span>
+                    <h3>SIMULAÇÃO FUZZY</h3>
+                </div>
             </div>
 
-            <article class="hud-panel">
-                <h3>ANÁLISE DE CAPTURA PCAP</h3>
-                <p>Importe arquivos de captura para análise.</p>
+            <p>
+                Utilize valores manuais para testar o comportamento
+                do motor de inferência. Estes dados não representam
+                necessariamente o tráfego real do dispositivo.
+            </p>
 
-                <form id="pcap-form">
-                    <input type="file" id="pcap-file" accept=".pcap,.pcapng" required>
-                    <button class="neon-button" type="submit">ANALISAR ARQUIVO</button>
-                </form>
+            <form id="fuzzy-form" class="fuzzy-form">
 
-                <pre id="pcap-result" class="code-result">Aguardando arquivo.</pre>
-            </article>
-        </section>
+                <label for="fuzzy-packets">
+                    Indicador de frequência de pacotes
+                    <input
+                        type="number"
+                        id="fuzzy-packets"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Informe um valor entre 0 e 100"
+                        required
+                    >
+                </label>
 
-        <footer class="footer">
-            G10 SENTINELHOME
-            <span>CYBER INTELLIGENCE PLATFORM</span>
-            <span>VERSION 2.0</span>
-        </footer>
+                <label for="fuzzy-ports">
+                    Indicador de portas suspeitas
+                    <input
+                        type="number"
+                        id="fuzzy-ports"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Informe um valor entre 0 e 100"
+                        required
+                    >
+                </label>
 
-    </main>
-</div>
+                <label for="fuzzy-traffic">
+                    Indicador de tráfego anormal
+                    <input
+                        type="number"
+                        id="fuzzy-traffic"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Informe um valor entre 0 e 100"
+                        required
+                    >
+                </label>
 
+                <button class="neon-button" type="submit">
+                    EXECUTAR SIMULAÇÃO
+                </button>
+
+            </form>
+
+        </article>
+
+        <!-- INFERENCE RESULT -->
+        <article class="hud-panel analysis-result" style="padding:22px;">
+
+            <span class="panel-code">FUZZY INFERENCE OUTPUT</span>
+
+            <div style="margin-top:25px;">
+                <strong id="fuzzy-result">--</strong>
+            </div>
+
+            <span id="fuzzy-level">
+                AGUARDANDO ANÁLISE
+            </span>
+
+            <p id="fuzzy-explanation">
+                Informe os indicadores e execute uma simulação
+                para visualizar o resultado.
+            </p>
+
+            <div class="result-details" id="fuzzy-details">
+
+                <div>
+                    <span class="panel-code">ORIGEM</span>
+                    <p id="fuzzy-source-label">Simulação manual</p>
+                </div>
+
+                <div>
+                    <span class="panel-code">CLASSIFICAÇÃO</span>
+                    <p id="fuzzy-classification">Não calculada</p>
+                </div>
+
+            </div>
+
+        </article>
+
+    </div>
+
+    <!-- AUTOMATIC MONITORING -->
+    <article class="hud-panel" style="padding:22px; margin-top:20px;">
+
+        <div class="panel-heading">
+            <div>
+                <span class="panel-code">CONTINUOUS NETWORK INTELLIGENCE</span>
+                <h3>ANÁLISE AUTOMÁTICA DE RISCO</h3>
+            </div>
+        </div>
+
+        <p>
+            O monitoramento contínuo coleta evidências da rede
+            e atualiza os indicadores dos dispositivos identificados.
+        </p>
+
+        <div class="stats-grid" style="margin-top:20px;">
+
+            <div class="stat-card cyan">
+                <div class="stat-content">
+                    <span>STATUS DO MONITORAMENTO</span>
+                    <strong id="fuzzy-monitor-status">AGUARDANDO</strong>
+                </div>
+            </div>
+
+            <div class="stat-card cyan">
+                <div class="stat-content">
+                    <span>ÚLTIMA COLETA</span>
+                    <strong id="fuzzy-last-collection">--</strong>
+                </div>
+            </div>
+
+            <div class="stat-card cyan">
+                <div class="stat-content">
+                    <span>DISPOSITIVOS ANALISADOS</span>
+                    <strong id="fuzzy-monitored-devices">0</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <p style="margin-top:15px;">
+            Para iniciar ou interromper a captura, utilize o módulo
+            de monitoramento contínuo. A análise automática depende
+            da existência de dados efetivamente coletados.
+        </p>
+
+    </article>
+
+</section>
+
+
+       
 <!-- MODAL DISPOSITIVO -->
 
 <dialog id="device-dialog">

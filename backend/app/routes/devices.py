@@ -316,9 +316,6 @@ def get_device(
     return find_device(db, device_id)
 
 
-# =====================================================
-# 7. CALCULAR E PERSISTIR RISCO FUZZY
-# =====================================================
 
 @router.post("/{device_id}/calculate-risk")
 def calculate_device_risk(
@@ -327,23 +324,16 @@ def calculate_device_risk(
     db: Session = Depends(get_db),
 ):
     """
-    Executa a inferencia Fuzzy e salva o resultado.
+    Executa uma simulacao Fuzzy experimental.
 
-    Os indicadores podem ser experimentais ou provenientes
-    de uma analise de rede previamente realizada.
-
-    O resultado nao representa, por si so, uma probabilidade
-    de ataque ou confirmacao de incidente.
+    O resultado e registrado como evento experimental,
+    sem alterar o risco operacional do dispositivo.
     """
 
     device = find_device(db, device_id)
 
     try:
-
-        # ---------------------------------------------
         # 1. EXECUCAO DO MOTOR FUZZY
-        # ---------------------------------------------
-
         result = analyze_risk(
             packet_score=data.packet_score,
             port_score=data.port_score,
@@ -353,25 +343,16 @@ def calculate_device_risk(
         risk_score = result["risk_score"]
         classification = result["classification"]
 
-        # ---------------------------------------------
-        # 2. ATUALIZACAO DO DISPOSITIVO
-        # ---------------------------------------------
-
-        device.risk_score = risk_score
-
-        # ---------------------------------------------
-        # 3. REGISTRO DO EVENTO
-        # ---------------------------------------------
-
+        # 2. REGISTRO SEPARADO DA SIMULACAO
         event = NetworkEvent(
             source_ip=device.ip_address,
             event_type="experimental_fuzzy_assessment",
             severity=classification,
             risk_score=risk_score,
             description=(
-                "Avaliacao Fuzzy experimental. "
-                "Os indicadores recebidos nao representam "
-                "necessariamente telemetria real da rede. "
+                "SIMULACAO FUZZY EXPERIMENTAL. "
+                "Este resultado nao representa telemetria real "
+                "e nao altera o risco operacional do dispositivo. "
                 f"Pacotes: {data.packet_score}; "
                 f"Portas: {data.port_score}; "
                 f"Trafego: {data.traffic_score}; "
@@ -382,24 +363,15 @@ def calculate_device_risk(
         )
 
         db.add(event)
-
-        # ---------------------------------------------
-        # 4. PERSISTENCIA NO SQLITE
-        # ---------------------------------------------
-
         db.commit()
-
-        db.refresh(device)
         db.refresh(event)
 
-        # ---------------------------------------------
-        # 5. RESPOSTA DA API
-        # ---------------------------------------------
-
+        # 3. RESPOSTA DA API
         return {
             "success": True,
-            "message": "Avaliacao Fuzzy salva com sucesso.",
+            "message": "Simulacao Fuzzy concluida e registrada.",
             "experimental": True,
+            "operational_risk_updated": False,
 
             "device": {
                 "id": device.id,
@@ -421,10 +393,19 @@ def calculate_device_risk(
                 "severity": event.severity,
                 "created_at": event.created_at.isoformat(),
             },
+
+            "operational_risk": {
+                "score": round(float(device.risk_score or 0.0), 2),
+                "updated_at": (
+                    device.risk_updated_at.isoformat()
+                    if device.risk_updated_at
+                    else None
+                ),
+                "source": device.risk_source,
+            },
         }
 
     except ValueError as error:
-
         db.rollback()
 
         raise HTTPException(
@@ -433,14 +414,12 @@ def calculate_device_risk(
         ) from error
 
     except Exception as error:
-
         db.rollback()
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Falha ao calcular e salvar o risco Fuzzy.",
+            detail="Falha ao calcular e registrar a simulacao Fuzzy.",
         ) from error
-
 
 # =====================================================
 # 8. CONSULTAR RISCO E HISTORICO DO DISPOSITIVO

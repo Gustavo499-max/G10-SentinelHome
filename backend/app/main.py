@@ -27,6 +27,7 @@ from app.services.fuzzy_engine import (
 
 from app.services.network_monitor import analyze_pcap
 from app.services.network_discovery import discover_devices
+from app.services.continuous_monitor import monitor
 
 from app.services.risk_analyzer import (
     analyze_capture_for_devices,
@@ -71,6 +72,11 @@ async def lifespan(app: FastAPI):
 
         logger.info("Banco de dados inicializado com sucesso.")
 
+        # Inicia o monitoramento continuo
+        monitor.start()
+
+        logger.info("Monitoramento continuo iniciado.")
+
         yield
 
     except Exception:
@@ -78,10 +84,12 @@ async def lifespan(app: FastAPI):
         raise
 
     finally:
+        # Encerra o monitoramento antes de fechar o banco
+        monitor.stop()
+
         engine.dispose()
+
         logger.info("G10 SentinelHome encerrado.")
-
-
 # =====================================================
 # 3. INSTANCIA FASTAPI
 # =====================================================

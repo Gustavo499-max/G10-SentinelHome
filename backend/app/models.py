@@ -39,6 +39,11 @@ class Device(Base):
     device_type = Column(String(50), default="Desconhecido", nullable=False)
     status = Column(String(20), default="desconhecido", nullable=False)
     risk_score = Column(Float, default=0.0, nullable=False)
+
+    # Metadados da última análise operacional
+    risk_updated_at = Column(DateTime, nullable=True)
+    risk_source = Column(String(20), nullable=True)
+
     last_seen = Column(DateTime, default=datetime.utcnow, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 

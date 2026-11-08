@@ -2660,123 +2660,101 @@ async function createAlert(event) {
 
 ===================================================== */
 
-async function calculateFuzzy(event) {
 
+async function calculateFuzzy(event) {
     event.preventDefault();
 
     const deviceId = $("#fuzzy-device")?.value;
 
-    const packets = Number($("#fuzzy-packets").value);
-
-    const ports = Number($("#fuzzy-ports").value);
-
-    const traffic = Number($("#fuzzy-traffic").value);
+    const packets = Number($("#fuzzy-packets")?.value);
+    const ports = Number($("#fuzzy-ports")?.value);
+    const traffic = Number($("#fuzzy-traffic")?.value);
 
     if (!deviceId) {
-
         toast("Selecione um dispositivo para analisar.", true);
-
         return;
-
     }
 
     const values = [packets, ports, traffic];
 
     if (values.some(value =>
-
         !Number.isFinite(value) || value < 0 || value > 100
-
     )) {
-
         toast("Os valores devem estar entre 0 e 100.", true);
-
         return;
-
     }
 
     const button = $("#fuzzy-form button[type='submit']");
 
     if (button) {
-
         button.disabled = true;
-
         button.textContent = "CALCULANDO...";
-
     }
 
     try {
-
         const result = await api(
-
             `/api/devices/${encodeURIComponent(deviceId)}/calculate-risk`,
-
             {
-
                 method: "POST",
-
                 headers: {
-
                     "Content-Type": "application/json"
-
                 },
-
                 body: JSON.stringify({
-
                     packet_score: packets,
-
                     port_score: ports,
-
                     traffic_score: traffic
-
                 })
-
             }
-
         );
 
-        const score = Number(result.risk_score);
+        // A API retorna os dados dentro de result.risk
+        const score = Number(result?.risk?.score);
+        const classification = result?.risk?.classification;
 
-        $("#fuzzy-result").textContent =
+        if (
+            !result?.success ||
+            !Number.isFinite(score) ||
+            !classification
+        ) {
+            throw new Error("A API retornou um resultado de risco inválido.");
+        }
 
-            `${score.toFixed(1)}%`;
+        $("#fuzzy-result").textContent = `${score.toFixed(1)}%`;
 
         $("#fuzzy-level").textContent =
-
-            String(result.classification || "NÃO CLASSIFICADO").toUpperCase();
+            String(classification).toUpperCase();
 
         $("#fuzzy-explanation").textContent =
+            `Dispositivo: ${result.device?.name || "Não identificado"}. ` +
+            `Evento registrado: ${result.event?.id ?? "Não informado"}. ` +
+            "Avaliação experimental baseada nos indicadores informados. " +
+            "O índice não representa uma probabilidade de ataque.";
 
-            `Análise persistida para o dispositivo ${
+        if ($("#fuzzy-source-label")) {
+            $("#fuzzy-source-label").textContent = "Simulação manual";
+        }
 
-                result.device?.name || ""
+        if ($("#fuzzy-classification")) {
+            $("#fuzzy-classification").textContent =
+                String(classification).toUpperCase();
+        }
 
-            }. Evento registrado: ${result.event_id ?? "não informado"}. ` +
-
-            "O índice é uma avaliação heurística, não uma probabilidade de ataque.";
-
-        toast("Risco calculado e registrado no banco de dados.");
+        toast("Inferência Fuzzy concluída e registrada.");
 
         await refreshDashboard();
 
     } catch (error) {
-
         console.error("Erro na análise Fuzzy:", error);
-
         toast(error.message, true);
 
     } finally {
-
         if (button) {
-
             button.disabled = false;
-
-            button.textContent = "EXECUTAR INFERÊNCIA";
-
+            button.textContent = "EXECUTAR SIMULAÇÃO";
         }
-
     }
-
 }
+
 
 /* =====================================================
 
